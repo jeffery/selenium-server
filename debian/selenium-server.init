@@ -21,7 +21,7 @@ DESC="SB4 Selenium server"
 PIDFILE="/var/run/$NAME.pid" 
 LOGDIR=/var/log/selenium-server
 LOGFILE=$LOGDIR/$NAME.log  # Server logfile
-DAEMONUSER=root
+DAEMONUSER=selenium
 
 test -x $DAEMON || exit 0
 test -x $DAEMON_WRAPPER || exit 0

@@ -7,8 +7,7 @@ Standards-Version: 3.8.4.0
 
 Package: selenium-server
 Architecture: all
-Depends: ${shlibs:Depends}, ${misc:Depends}
-Pre-Depends: xvfb-daemon
+Depends: ${shlibs:Depends}, ${misc:Depends}, adduser
 Description: An implementation of selenium standalone server
  The Selenium Server is needed in order to run either Selenium RC style 
  scripts or Remote Selenium Webdriver ones. The 2.x server is a drop-in 

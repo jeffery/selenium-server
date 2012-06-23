@@ -15,7 +15,7 @@ PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 
 DAEMON=/usr/bin/java
 DAEMON_WRAPPER=$DAEMON
-JAR_PATH=/usr/share/selenium-server
+JAR_PATH=/var/lib/selenium/jars
 NAME=selenium-server
 DESC="SB4 Selenium server"
 PIDFILE="/var/run/$NAME.pid" 

@@ -21,7 +21,12 @@ set -e
 
 case "$1" in
     purge|remove|upgrade|failed-upgrade|abort-install|abort-upgrade|disappear)
-	rm -rf /usr/share/selenium-server /var/log/selenium-server
+
+	# Remove the selenium user
+	userdel selenium || true
+
+	# Cleanup
+	rm -rf /var/lib/selenium /var/run/selenium-server /var/log/selenium-server
     ;;
 
     *)

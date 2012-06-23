@@ -1,5 +1,5 @@
-# Holds the Java archives
-usr/share/selenium-server
+# Home directory of Selenium server. It holds the Java archives
+var/lib/selenium
 
 # For configuring the server options
 etc/default

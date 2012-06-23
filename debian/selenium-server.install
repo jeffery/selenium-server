@@ -1,1 +1,1 @@
-src/selenium-server-standalone-2.24.1.jar usr/share/selenium-server
+src/selenium-server-standalone-2.24.1.jar var/lib/selenium/jars

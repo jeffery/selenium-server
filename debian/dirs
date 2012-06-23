@@ -1,0 +1,9 @@
+# Holds the Java archives
+usr/share/selenium-server
+
+# For configuring the server options
+etc/default
+
+# For logging the server actions
+var/log/selenium-server
+

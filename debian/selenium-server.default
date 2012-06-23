@@ -1,0 +1,14 @@
+# Defaults for selenium-server initscript
+# sourced by /etc/init.d/selenium-server
+# installed at /etc/default/selenium-server by the maintainer scripts
+
+#
+# This is a POSIX shell fragment
+#
+
+# Additional options that are passed to the Daemon.
+MAX_MEMORY=-Xmx500m
+STACK_SIZE=-Xss1024k
+FRAME_BUFFER_PORT=99.0
+JAR_ARCHIVE=selenium-server-standalone-2.24.1.jar
+RUN=yes

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="selenium-server" default="build" basedir=".">
+	<property name="source" value="." />
+	<property environment="env" />
+
+	<!-- Clean up -->
+	<target name="clean" description="Clean up and create artifact directories">
+		
+		<!-- Delete the Build Directory -->
+		<delete dir="${basedir}/build" />
+
+		<!-- Create build directory -->
+		<mkdir dir="${basedir}/build" />
+	</target>
+	
+	<!-- Debianise the Source code -->
+	<target name="build-deb">
+		<echo message="Debianising Project" />
+		<exec executable="bash" dir="${basedir}" failonerror="true">
+			<arg line="./debianize.sh" />
+		</exec>
+	</target>
+
+	<!-- Build everything -->
+	<target name="build" depends="clean, build-deb" />
+</project>

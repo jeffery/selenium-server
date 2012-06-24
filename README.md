@@ -8,10 +8,10 @@ Buffer' prior to launching the Selenium server.
 
 # Building
 
-To build the debian package, simply execute the following in the root of the
-project.
+To build the debian package, you require ant. Simply execute the following in
+the root of the project.
 
-	debuild -i -uc -us
+	ant
 
 # Running
 

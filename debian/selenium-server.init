@@ -7,7 +7,7 @@
 # Should-Stop:       
 # Default-Start:     2 3 4 5
 # Default-Stop:      0 1 6
-# Short-Description: Start SB4 Selenium server
+# Short-Description: Start Selenium server
 # Description:       Controls the Selenium standalone server Engine
 ### END INIT INFO
 
@@ -17,7 +17,7 @@ DAEMON=/usr/bin/java
 DAEMON_WRAPPER=$DAEMON
 JAR_PATH=/var/lib/selenium/jars
 NAME=selenium-server
-DESC="SB4 Selenium server"
+DESC="Selenium Server"
 PIDFILE="/var/run/$NAME.pid" 
 LOGDIR=/var/log/selenium-server
 LOGFILE=$LOGDIR/$NAME.log  # Server logfile

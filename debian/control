@@ -1,5 +1,5 @@
 Source: selenium-server
-Section: web 
+Section: devel
 Priority: extra
 Maintainer: Jeffery Fernandez <jeffery@fernandez.net.au>
 Build-Depends: debhelper (>= 5)

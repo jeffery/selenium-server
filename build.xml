@@ -55,7 +55,7 @@
 	<target name="patch.debian" description="Apply the Debian patch to the original source">
 		<exec executable="bash" outputproperty="patch.result" failonerror="true">
 			<arg value="-c"/>
-			<arg value="cd ${projectbuildpath} &amp;&amp; zcat *.diff.gz | patch -p1"/>
+			<arg value="cd ${projectbuildpath} &amp;&amp; zcat *.diff.gz | patch -p1 &amp;&amp; rm *.diff.gz"/>
 		</exec>
 		<echo message="${patch.result}" />
 	</target>

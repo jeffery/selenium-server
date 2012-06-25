@@ -1,5 +1,0 @@
-selenium-server (2.24.1-1) unstable; urgency=low
-
-  * Fixed creation of home directory for selenium user
-
- -- Jeffery Fernandez <jeffery@fernandez.net.au>  Thu, 21 Jun 2012 12:16:08 +1000

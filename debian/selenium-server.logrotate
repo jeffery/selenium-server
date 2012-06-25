@@ -1,9 +1,0 @@
-/var/log/selenium-server/selenium-server.log {
-        weekly
-        copytruncate
-        missingok
-        rotate 52
-        compress
-        delaycompress
-        notifempty
-}

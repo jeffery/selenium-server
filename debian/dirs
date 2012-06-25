@@ -1,9 +1,0 @@
-# Home directory of Selenium server. It holds the Java archives
-var/lib/selenium
-
-# For configuring the server options
-etc/default
-
-# For logging the server actions
-var/log/selenium-server
-

@@ -1,27 +1,74 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <project name="selenium-server" default="build" basedir=".">
 	<property name="source" value="." />
 	<property environment="env" />
+	<property name="buildpath" value="${basedir}/build" />
 
-	<!-- Clean up -->
-	<target name="clean" description="Clean up and create artifact directories">
-		
-		<!-- Delete the Build Directory -->
-		<delete dir="${basedir}/build" />
-
-		<!-- Create build directory -->
-		<mkdir dir="${basedir}/build" />
+	<target name="print.default.properties" >
+		<echo message="os.name:          ${os.name}"          />
+		<echo message="basedir:          ${basedir}"          />
+		<echo message="ant.file:         ${ant.file}"         />
+		<echo message="ant.project.name: ${ant.project.name}" />
+		<echo message="ant.java.version: ${ant.java.version}" />
 	</target>
 	
+	<!-- Extract the software version -->
+	<target name="selenium.version" description="Extract Selenium Server version">
+		<exec executable="bash" outputproperty="selenium.version" failonerror="true">
+			<arg value="-c"/>
+			<!-- sed command explanation: Delete everything up to, and including a dash. Deletes a dot and consequent non-dot characters up to the end of the line -->
+			<arg value="echo $(basename $(ls -1 '${basedir}/src/')) | sed 's/.*-//;s/\.[^.]*$//'" />
+		</exec>
+		<echo message="${selenium.version}" />
+	</target>
+
+	<!-- Clean up -->
+	<target name="clean" description="Clean up and create artifact directories" depends="selenium.version">
+		<property name="projectorigpath" value="${buildpath}/${ant.project.name}-${selenium.version}.orig"/>
+		<property name="projectbuildpath" value="${buildpath}/${ant.project.name}-${selenium.version}"/>
+
+		<!-- Delete the Build Directory -->
+		<delete dir="${buildpath}" />
+
+		<!-- Create the original and build directories -->
+		<mkdir dir="${projectorigpath}" />
+		<mkdir dir="${projectbuildpath}" />
+	</target>
+	
+	<!-- Export the source from git working copy -->
+	<available file=".git" type="dir" property="git.present"/>
+	<target name="git.export" description="Export Git source folder" if="git.present">
+		<exec executable="bash" outputproperty="git.export.orig" failonerror="true">
+			<arg value="-c"/>
+			<arg value="git archive HEAD src | ( cd ${projectorigpath} &amp;&amp; tar -xf - ) &amp;&amp; echo 'Exported into ${projectorigpath}'" />
+		</exec>
+		<echo message="${git.export.orig}" />
+
+		<exec executable="bash" outputproperty="git.export.build" failonerror="true">
+			<arg value="-c"/>
+			<arg value="git archive HEAD src *.diff.gz | ( cd ${projectbuildpath} &amp;&amp; tar -xf - ) &amp;&amp; echo 'Exported into ${projectbuildpath}'" />
+		</exec>
+		<echo message="${git.export.build}" />
+	</target>
+
+	<!-- Apply the Debian patch file -->
+	<target name="patch.debian" description="Apply the Debian patch to the original source">
+		<exec executable="bash" outputproperty="patch.result" failonerror="true">
+			<arg value="-c"/>
+			<arg value="cd ${projectbuildpath} &amp;&amp; zcat *.diff.gz | patch -p1"/>
+		</exec>
+		<echo message="${patch.result}" />
+	</target>
+
+	
 	<!-- Debianise the Source code -->
-	<target name="build-deb">
-		<echo message="Debianising Project" />
+	<target name="build.deb" depends="patch.debian">
 		<exec executable="bash" dir="${basedir}" failonerror="true">
-			<arg line="./debianize.sh" />
+			<arg value="-c" />
+			<arg value="cd ${projectbuildpath} &amp;&amp; debuild -i -us -uc" />
 		</exec>
 	</target>
 
 	<!-- Build everything -->
-	<target name="build" depends="clean, build-deb" />
+	<target name="build" depends="print.default.properties, clean, git.export, build.deb" />
 </project>

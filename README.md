@@ -20,6 +20,19 @@ of the project.
 
 	ant
 
+# Pre-built Binaries
+
+The lastest debian release of this software is available from the following URL:
+http://www.jefferyfernandez.id.au/downloads/selenium-server_<selenium release>-<debian release>_all.deb
+
+	eg. http://www.jefferyfernandez.id.au/downloads/selenium-server_2.24.1-16_all.deb
+
+# Installing
+
+The debian package can be installed with the following command
+	
+	sudo dpkg -i selenium-server_2.24.1-16_all.deb
+
 # Running
 
 The Selenium server should start up automatically on system boot. It can also
@@ -30,8 +43,9 @@ be manually started/stopped/re-started by executing the following command.
 # Environment Setup & Logging
 
 * The server runs as the 'selenium' user with the home directory set to /var/lib/selenium. 
-* Logging for the server is available under /var/log/selenium-server/
+* The server runs on port 4444 by default.
 * The server is setup to run with an 'X Virtual Frame Buffer' on DISPLAY port 99.0
+* Logging for the server is available under /var/log/selenium-server/
 * Any non-default configuration changes can be made in /etc/defaults/selenium-server
 
 If you are using Selenium RC protocol ( aka Selenium 1 ), then you can instruct
@@ -41,13 +55,6 @@ the Server, an Apache2 alias '/selenium' is created to get access to the
 screenshots.
 
 	eg. request for screenshot http://<server ip-address>/selenium/screenshots/
-
-# Pre-built Binaries
-
-The lastest debian release of this software is available from the following URL:
-http://www.jefferyfernandez.id.au/downloads/selenium-server_<selenium release>-<debian release>_all.deb
-
-	eg. http://www.jefferyfernandez.id.au/downloads/selenium-server_2.24.1-16_all.deb
 
 # Project Maintenance
 

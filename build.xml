@@ -1,74 +1,104 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="selenium-server" default="build" basedir=".">
-	<property name="source" value="." />
-	<property environment="env" />
-	<property name="buildpath" value="${basedir}/build" />
+	<property name="source" value="."/>
+	<property environment="env"/>
+	<property name="buildpath" value="${basedir}/build"/>
 
-	<target name="print.default.properties" >
-		<echo message="os.name:          ${os.name}"          />
-		<echo message="basedir:          ${basedir}"          />
-		<echo message="ant.file:         ${ant.file}"         />
-		<echo message="ant.project.name: ${ant.project.name}" />
-		<echo message="ant.java.version: ${ant.java.version}" />
+	<!-- Detect the Target OS -->
+	<condition property="isLinuxUbuntu">
+		<os name="Linux"/>
+	</condition>
+	<condition property="isMacOsX">
+		<and>
+			<os family="mac"/>
+			<os family="unix"/>
+		</and>
+	</condition>
+
+	<!-- Obviously we need Git repo to exist in the current directory -->
+	<available file=".git" type="dir" property="git.present"/>
+
+	<target name="print.default.properties">
+		<echo message="os.name:          ${os.name}"/>
+		<echo message="os.version:       ${os.version}"/>
+		<echo message="os.arch:          ${os.arch}"/>
+		<echo message="basedir:          ${basedir}"/>
+		<echo message="ant.file:         ${ant.file}"/>
+		<echo message="ant.project.name: ${ant.project.name}"/>
+		<echo message="ant.java.version: ${ant.java.version}"/>
 	</target>
-	
+
 	<!-- Extract the software version -->
 	<target name="selenium.version" description="Extract Selenium Server version">
 		<exec executable="bash" outputproperty="selenium.version" failonerror="true">
 			<arg value="-c"/>
 			<!-- sed command explanation: Delete everything up to, and including a dash. Deletes a dot and consequent non-dot characters up to the end of the line -->
-			<arg value="echo $(basename $(ls -1 '${basedir}/src/')) | sed 's/.*-//;s/\.[^.]*$//'" />
+			<arg value="echo $(basename $(ls -1 '${basedir}/src/')) | sed 's/.*-//;s/\.[^.]*$//'"/>
 		</exec>
-		<echo message="${selenium.version}" />
+		<echo message="${selenium.version}"/>
 	</target>
 
 	<!-- Clean up -->
-	<target name="clean" description="Clean up and create artifact directories" depends="selenium.version">
-		<property name="projectorigpath" value="${buildpath}/${ant.project.name}-${selenium.version}.orig"/>
+	<target name="clean" description="Clean up any old build artifacts">
+		<delete dir="${buildpath}"/>
+	</target>
+
+
+	<target name="build.macosx" if="isMacOsX" depends="selenium.version">
+		<echo>Building for Mac OS X</echo>
 		<property name="projectbuildpath" value="${buildpath}/${ant.project.name}-${selenium.version}"/>
 
-		<!-- Delete the Build Directory -->
-		<delete dir="${buildpath}" />
-
-		<!-- Create the original and build directories -->
-		<mkdir dir="${projectorigpath}" />
-		<mkdir dir="${projectbuildpath}" />
+		<!-- Create the Build directories -->
+		<mkdir dir="${projectbuildpath}"/>
 	</target>
-	
+
+
+	<target name="build.linux" if="isLinuxUbuntu" depends="selenium.version">
+		<echo>Building for Ubuntu</echo>
+		<property name="projectbuildpath" value="${buildpath}/${ant.project.name}-${selenium.version}"/>
+		<property name="projectorigpath" value="${buildpath}/${ant.project.name}-${selenium.version}.orig"/>
+
+		<!-- Create the Build directories -->
+		<mkdir dir="${projectbuildpath}"/>
+		<mkdir dir="${projectorigpath}"/>
+
+		<antcall target="build.deb"/>
+	</target>
+
+
 	<!-- Export the source from git working copy -->
-	<available file=".git" type="dir" property="git.present"/>
 	<target name="git.export" description="Export Git source folder" if="git.present">
 		<exec executable="bash" outputproperty="git.export.orig" failonerror="true">
 			<arg value="-c"/>
-			<arg value="git archive HEAD src | ( cd ${projectorigpath} &amp;&amp; tar -xf - ) &amp;&amp; echo 'Exported into ${projectorigpath}'" />
+			<arg value="git archive HEAD src | ( cd ${projectorigpath} &amp;&amp; tar -xf - ) &amp;&amp; echo 'Exported into ${projectorigpath}'"/>
 		</exec>
-		<echo message="${git.export.orig}" />
+		<echo message="${git.export.orig}"/>
 
 		<exec executable="bash" outputproperty="git.export.build" failonerror="true">
 			<arg value="-c"/>
-			<arg value="git archive HEAD src *.diff.gz | ( cd ${projectbuildpath} &amp;&amp; tar -xf - ) &amp;&amp; echo 'Exported into ${projectbuildpath}'" />
+			<arg value="git archive HEAD src *.diff.gz | ( cd ${projectbuildpath} &amp;&amp; tar -xf - ) &amp;&amp; echo 'Exported into ${projectbuildpath}'"/>
 		</exec>
-		<echo message="${git.export.build}" />
+		<echo message="${git.export.build}"/>
 	</target>
 
 	<!-- Apply the Debian patch file -->
-	<target name="patch.debian" description="Apply the Debian patch to the original source">
+	<target name="patch.debian" description="Apply the Debian patch to the original source" depends="git.export">
 		<exec executable="bash" outputproperty="patch.result" failonerror="true">
 			<arg value="-c"/>
 			<arg value="cd ${projectbuildpath} &amp;&amp; zcat *.diff.gz | patch -p1 &amp;&amp; rm *.diff.gz"/>
 		</exec>
-		<echo message="${patch.result}" />
+		<echo message="${patch.result}"/>
 	</target>
 
-	
+
 	<!-- Debianise the Source code -->
 	<target name="build.deb" depends="patch.debian">
 		<exec executable="bash" dir="${basedir}" failonerror="true">
-			<arg value="-c" />
-			<arg value="cd ${projectbuildpath} &amp;&amp; debuild -i -us -uc" />
+			<arg value="-c"/>
+			<arg value="cd ${projectbuildpath} &amp;&amp; debuild -i -us -uc"/>
 		</exec>
 	</target>
 
 	<!-- Build everything -->
-	<target name="build" depends="print.default.properties, clean, git.export, build.deb" />
+	<target name="build" depends="print.default.properties, clean, build.linux, build.macosx"/>
 </project>

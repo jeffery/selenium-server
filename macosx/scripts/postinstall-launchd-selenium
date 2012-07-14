@@ -1,0 +1,61 @@
+#!/bin/bash
+
+SELENIUM_DAEMON_PLIST="/Library/LaunchDaemons/au.net.fernandez.selenium.plist"
+
+# Because PackageMaker just copies the components, we need to fix the permissions
+chown root:wheel ${SELENIUM_DAEMON_PLIST}
+chmod 644 ${SELENIUM_DAEMON_PLIST}
+
+SELENIUM_HOME_DIR="/Users/Shared/Selenium"
+mkdir -p $SELENIUM_HOME_DIR
+
+if ! dscl . -list /Users/selenium; then
+    echo 'No selenium user found, creating selenium user and group'
+
+	# Find free uid under 500
+    uid=$(dscl . -list /Users uid | sort -nrk 2 | awk '$2 < 500 {print $2 + 1; exit 0}')
+    if [ $uid -eq 500 ]; then
+        echo 'ERROR: All system uids are in use!'
+        exit 1
+    fi
+    echo "Using uid $uid for selenium"
+
+    gid=$uid
+    while dscl -search /Groups gid $gid | grep -q $gid; do
+        echo "gid $gid is not free, trying next"
+        gid=$(($gid + 1))
+    done
+    echo "Using gid $gid for selenium user"
+
+	# Create the primary group
+    dscl . -create /Groups/selenium PrimaryGroupID $gid
+
+	# Create the selenium user with a bash shell
+    dscl . -create /Users/selenium UserShell /bin/bash
+    # No password login
+    dscl . -create /Users/selenium Password '*'
+    # Associating it to the uid and gid
+    dscl . -create /Users/selenium UniqueID $uid
+    dscl . -create /Users/selenium PrimaryGroupID $gid
+    # Setting the home directory
+    dscl . -create /Users/selenium NFSHomeDirectory "$SELENIUM_HOME_DIR"
+
+    dscl . -append /Groups/selenium GroupMembership selenium
+fi
+
+find "$SELENIUM_HOME_DIR" \( -not -user selenium -or -not -group selenium \) -print0 | xargs -0 chown selenium:selenium
+
+# Load and start the launch daemon
+/bin/launchctl load -w ${SELENIUM_DAEMON_PLIST}
+
+# Wait for port 4444 to start accepting connections.
+# But don't wait forever.
+timeout=$(($(date +%s) + 60))
+while [ $(date +%s) -lt $timeout ] && ! curl -s http://localhost:4444/wd/hub >/dev/null; do
+    sleep 1
+done
+
+if [ $(date +%s) -ge $timeout ]; then
+    echo "Timed out waiting for Selenium port 4444 to start listening!"
+    echo "Either Selenium did not load or this system is very slow."
+fi

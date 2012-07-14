@@ -1,0 +1,8 @@
+#!/bin/bash
+
+SELENIUM_APP="/Applications/Selenium"
+
+# Fix Selenium Permissions
+chown -R root:wheel ${SELENIUM_APP}
+chmod 755 ${SELENIUM_APP}
+chmod 644 ${SELENIUM_APP}/*

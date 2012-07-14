@@ -1,0 +1,28 @@
+#!/bin/bash
+
+SELENIUM_DAEMON_PLIST="/Library/LaunchDaemons/au.net.fernandez.selenium.plist"
+
+# Because PackageMaker just copies the components, we need to fix the permissions
+chown root:wheel ${SELENIUM_DAEMON_PLIST}
+chmod 644 ${SELENIUM_DAEMON_PLIST}
+
+# Create the home directory for the Server
+mkdir -p /Users/Shared/Selenium
+
+# Change ownership to the daemon user
+find /Users/Shared/Selenium \( -not -user daemon -or -not -group daemon \) -print0 | xargs -0 chown daemon:daemon
+
+# Load and start the launch daemon
+/bin/launchctl load -w ${SELENIUM_DAEMON_PLIST}
+
+# Wait for port 4444 to start accepting connections.
+# But don't wait forever.
+timeout=$(($(date +%s) + 60))
+while [ $(date +%s) -lt $timeout ] && ! curl -s http://localhost:4444/wd/hub >/dev/null; do
+    sleep 1
+done
+
+if [ $(date +%s) -ge $timeout ]; then
+    echo "Timed out waiting for Selenium port 4444 to start listening!"
+    echo "Either Selenium did not load or this system is very slow."
+fi

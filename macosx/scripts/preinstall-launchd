@@ -1,0 +1,8 @@
+#!/bin/bash
+
+SELENIUM_DAEMON_PLIST="/Library/LaunchDaemons/au.net.fernandez.selenium.plist"
+if [ -f ${SELENIUM_DAEMON_PLIST} ]; then
+	launchctl unload ${SELENIUM_DAEMON_PLIST} || echo 'Failed to unload old Selenium launch daemon. Maybe it is was not loaded?'
+else
+	echo "Installing Selenium Server for the first time"
+fi

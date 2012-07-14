@@ -44,16 +44,35 @@
 	</target>
 
 
-	<target name="build.macosx" if="isMacOsX" depends="selenium.version">
+	<target name="check.pkg.maker" description="Check if PackageMaker application exists">
+		<exec executable="bash" outputproperty="PackageMakerApp" failonerror="true">
+			<arg value="-c"/>
+			<arg value="mdfind 'kMDItemCFBundleIdentifier == com.apple.PackageMaker'"/>
+		</exec>
+		<condition property="PackageManagerExist">
+			<equals arg1="${PackageMakerApp}" arg2="/Applications/PackageMaker.app" casesensitive="true"/>
+		</condition>
+	</target>
+
+	<target name="build.macosx" description="Build the Mac Os X Package" if="isMacOsX" depends="check.pkg.maker">
 		<echo>Building for Mac OS X</echo>
 		<property name="projectbuildpath" value="${buildpath}/${ant.project.name}-${selenium.version}"/>
 
 		<!-- Create the Build directories -->
 		<mkdir dir="${projectbuildpath}"/>
+
+		<antcall target="build.pkg"/>
+	</target>
+
+	<target name="build.pkg" if="PackageManagerExist">
+		<property name="PackageManagerExe" value="${PackageMakerApp}/Contents/MacOS/PackageMaker"/>
+		<property name="PackageNameVersion" value="${ant.project.name}-${selenium.version}.pkg"/>
+
+		<echo message="${PackageManagerExe}"/>
 	</target>
 
 
-	<target name="build.linux" if="isLinuxUbuntu" depends="selenium.version">
+	<target name="build.linux" if="isLinuxUbuntu">
 		<echo>Building for Ubuntu</echo>
 		<property name="projectbuildpath" value="${buildpath}/${ant.project.name}-${selenium.version}"/>
 		<property name="projectorigpath" value="${buildpath}/${ant.project.name}-${selenium.version}.orig"/>
@@ -100,5 +119,5 @@
 	</target>
 
 	<!-- Build everything -->
-	<target name="build" depends="print.default.properties, clean, build.linux, build.macosx"/>
+	<target name="build" depends="print.default.properties, clean, selenium.version, build.linux, build.macosx"/>
 </project>

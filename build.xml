@@ -69,7 +69,22 @@
 		<property name="PackageManagerExe" value="${PackageMakerApp}/Contents/MacOS/PackageMaker"/>
 		<property name="PackageNameVersion" value="${ant.project.name}-${selenium.version}.pkg"/>
 
-		<echo message="${PackageManagerExe}"/>
+		<echo message="Building ${PackageNameVersion}"/>
+
+		<exec description="Update the install source" executable="bash" failonerror="true">
+			<arg value="-c"/>
+			<arg value="cd ${projectbuildpath}/macosx &amp;&amp; sed -i '' 's/pt=&quot;.*&quot; m=&quot;/pt=&quot;..\/src\/${ant.project.name}-standalone-${selenium.version}.jar&quot; m=&quot;/g' SeleniumServerInstaller.pmdoc\/01selenium-contents.xml"/>
+		</exec>
+
+		<exec description="Update the install source" executable="bash" failonerror="true">
+			<arg value="-c"/>
+			<arg value="cd ${projectbuildpath}/macosx &amp;&amp; sed -i '' 's/&lt;installFrom relative=&quot;true&quot;&gt;.*&lt;\/installFrom&gt;/&lt;installFrom relative=&quot;true&quot;&gt;..\/src\/${ant.project.name}-standalone-${selenium.version}.jar&lt;\/installFrom&gt;/g' SeleniumServerInstaller.pmdoc\/01selenium.xml"/>
+		</exec>
+
+		<exec description="Build the Package" executable="bash" failonerror="true">
+			<arg value="-c"/>
+			<arg value="cd ${projectbuildpath}/macosx &amp;&amp; ${PackageManagerExe} --doc SeleniumServerInstaller.pmdoc --out ../${PackageNameVersion} --version ${selenium.version} --title 'Selenium Server ${selenium.version}'"/>
+		</exec>
 	</target>
 
 	<!-- Export the source from git working copy for building debian package -->

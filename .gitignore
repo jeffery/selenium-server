@@ -1,1 +1,4 @@
 build
+macosx/SeleniumServer.pkg
+.DS_Store
+

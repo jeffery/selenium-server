@@ -44,16 +44,7 @@
 	</target>
 
 
-	<target name="check.pkg.maker" description="Check if PackageMaker application exists">
-		<exec executable="bash" outputproperty="PackageMakerApp" failonerror="true">
-			<arg value="-c"/>
-			<arg value="mdfind 'kMDItemCFBundleIdentifier == com.apple.PackageMaker'"/>
-		</exec>
-		<condition property="PackageManagerExist">
-			<equals arg1="${PackageMakerApp}" arg2="/Applications/PackageMaker.app" casesensitive="true"/>
-		</condition>
-	</target>
-
+	<!-- #################### MacOsX Build section #################### -->
 	<target name="build.macosx" description="Build the Mac Os X Package" if="isMacOsX" depends="check.pkg.maker">
 		<echo>Building for Mac OS X</echo>
 		<property name="projectbuildpath" value="${buildpath}/${ant.project.name}-${selenium.version}"/>
@@ -64,14 +55,35 @@
 		<antcall target="build.pkg"/>
 	</target>
 
-	<target name="build.pkg" if="PackageManagerExist">
+	<target name="check.pkg.maker" description="Check if PackageMaker application exists">
+		<exec executable="bash" outputproperty="PackageMakerApp" failonerror="true">
+			<arg value="-c"/>
+			<arg value="mdfind 'kMDItemCFBundleIdentifier == com.apple.PackageMaker'"/>
+		</exec>
+		<condition property="PackageManagerExist">
+			<equals arg1="${PackageMakerApp}" arg2="/Applications/PackageMaker.app" casesensitive="true"/>
+		</condition>
+	</target>
+
+	<target name="build.pkg" if="PackageManagerExist" depends="git.export.macosx">
 		<property name="PackageManagerExe" value="${PackageMakerApp}/Contents/MacOS/PackageMaker"/>
 		<property name="PackageNameVersion" value="${ant.project.name}-${selenium.version}.pkg"/>
 
 		<echo message="${PackageManagerExe}"/>
 	</target>
 
+	<!-- Export the source from git working copy for building debian package -->
+	<target name="git.export.macosx" description="Export Git source folder" if="git.present">
+		<exec executable="bash" outputproperty="git.export.build" failonerror="true">
+			<arg value="-c"/>
+			<arg value="git archive HEAD src macosx | ( cd ${projectbuildpath} &amp;&amp; tar -xf - ) &amp;&amp; echo 'Exported into ${projectbuildpath}'"/>
+		</exec>
+		<echo message="${git.export.build}"/>
+	</target>
+	<!-- #################### MacOsX Build section #################### -->
 
+
+	<!-- #################### Linux Build section #################### -->
 	<target name="build.linux" if="isLinuxUbuntu">
 		<echo>Building for Ubuntu</echo>
 		<property name="projectbuildpath" value="${buildpath}/${ant.project.name}-${selenium.version}"/>
@@ -85,8 +97,8 @@
 	</target>
 
 
-	<!-- Export the source from git working copy -->
-	<target name="git.export" description="Export Git source folder" if="git.present">
+	<!-- Export the source from git working copy for building debian package -->
+	<target name="git.export.debian" description="Export Git source folder" if="git.present">
 		<exec executable="bash" outputproperty="git.export.orig" failonerror="true">
 			<arg value="-c"/>
 			<arg value="git archive HEAD src | ( cd ${projectorigpath} &amp;&amp; tar -xf - ) &amp;&amp; echo 'Exported into ${projectorigpath}'"/>
@@ -101,14 +113,13 @@
 	</target>
 
 	<!-- Apply the Debian patch file -->
-	<target name="patch.debian" description="Apply the Debian patch to the original source" depends="git.export">
+	<target name="patch.debian" description="Apply the Debian patch to the original source" depends="git.export.debian">
 		<exec executable="bash" outputproperty="patch.result" failonerror="true">
 			<arg value="-c"/>
 			<arg value="cd ${projectbuildpath} &amp;&amp; zcat *.diff.gz | patch -p1 &amp;&amp; rm *.diff.gz"/>
 		</exec>
 		<echo message="${patch.result}"/>
 	</target>
-
 
 	<!-- Debianise the Source code -->
 	<target name="build.deb" depends="patch.debian">
@@ -117,6 +128,7 @@
 			<arg value="cd ${projectbuildpath} &amp;&amp; debuild -i -us -uc"/>
 		</exec>
 	</target>
+	<!-- #################### Linux Build section #################### -->
 
 	<!-- Build everything -->
 	<target name="build" depends="print.default.properties, clean, selenium.version, build.linux, build.macosx"/>

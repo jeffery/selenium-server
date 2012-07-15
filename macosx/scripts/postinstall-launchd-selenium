@@ -7,7 +7,7 @@ chown root:wheel ${SELENIUM_DAEMON_PLIST}
 chmod 644 ${SELENIUM_DAEMON_PLIST}
 
 SELENIUM_HOME_DIR="/Users/Shared/Selenium"
-mkdir -p $SELENIUM_HOME_DIR
+mkdir -p "$SELENIUM_HOME_DIR/Home"
 
 if ! dscl . -list /Users/selenium; then
     echo 'No selenium user found, creating selenium user and group'

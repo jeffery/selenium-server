@@ -81,10 +81,15 @@
 			<arg value="cd ${projectbuildpath}/macosx &amp;&amp; sed -i '' 's/&lt;installFrom relative=&quot;true&quot;&gt;.*&lt;\/installFrom&gt;/&lt;installFrom relative=&quot;true&quot;&gt;..\/src\/${ant.project.name}.jar&lt;\/installFrom&gt;/g' SeleniumServerInstaller.pmdoc\/01selenium.xml"/>
 		</exec>
 
-		<exec description="Update the install source for the Choice content" executable="bash" failonerror="true">
+		<exec description="Update the install source for the Project content" executable="bash" failonerror="true">
 			<arg value="-c"/>
 			<arg value="cd ${projectbuildpath}/macosx &amp;&amp; sed -i '' 's/pt=&quot;.*&quot; m=&quot;/pt=&quot;..\/src\/${ant.project.name}.jar&quot; m=&quot;/g' SeleniumServerInstaller.pmdoc\/01selenium-contents.xml"/>
 		</exec>
+
+		<!-- <exec description="Update the plist source for the Launch Daemon content" executable="bash" failonerror="true">
+			<arg value="-c"/>
+			<arg value="cd ${projectbuildpath}/macosx &amp;&amp; sed -i '' 's/pt=&quot;.*&quot; m=&quot;/pt=&quot;launchd\/daemon\/au.net.fernandez.selenium.plist&quot; m=&quot;/g' SeleniumServerInstaller.pmdoc\/02au-contents.xml"/>
+		</exec> -->
 
 		<exec description="Build the Package" executable="bash" failonerror="true">
 			<arg value="-c"/>

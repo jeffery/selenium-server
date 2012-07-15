@@ -8,7 +8,7 @@
 			<string>/Users/Shared/Selenium/Home</string>
 		</dict>
 		<key>GroupName</key>
-		<string>staff</string>
+		<string>daemon</string>
 		<key>heapSize</key>
 		<string>500m</string>
 		<key>stackSize</key>

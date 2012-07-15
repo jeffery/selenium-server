@@ -9,12 +9,6 @@
 		</dict>
 		<key>GroupName</key>
 		<string>daemon</string>
-		<key>heapSize</key>
-		<string>500m</string>
-		<key>stackSize</key>
-		<string>1024k</string>
-		<key>permGen</key>
-		<string>128M</string>
 		<key>KeepAlive</key>
 		<true/>
 		<key>Label</key>

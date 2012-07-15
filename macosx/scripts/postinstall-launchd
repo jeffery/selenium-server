@@ -10,7 +10,7 @@ chmod 644 ${SELENIUM_DAEMON_PLIST}
 mkdir -p /Users/Shared/Selenium/Home
 
 # Change ownership to the current user
-find /Users/Shared/Selenium \( -not -user $USER -or -not -group $USER \) -print0 | xargs -0 chown $USER:staff
+find /Users/Shared/Selenium \( -not -user $USER -or -not -group staff \) -print0 | xargs -0 chown $USER:staff
 
 # Load and start the launch daemon
 /bin/launchctl load -w ${SELENIUM_DAEMON_PLIST}

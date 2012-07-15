@@ -8,7 +8,7 @@
 			<string>/Users/Shared/Selenium/Home</string>
 		</dict>
 		<key>GroupName</key>
-		<string>daemon</string>
+		<string>staff</string>
 		<key>KeepAlive</key>
 		<true/>
 		<key>Label</key>
@@ -21,6 +21,6 @@
 		<key>RunAtLoad</key>
 		<true/>
 		<key>UserName</key>
-		<string>daemon</string>
+		<string>jeffery</string>
 	</dict>
 </plist>

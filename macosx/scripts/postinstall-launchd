@@ -9,8 +9,11 @@ chmod 644 ${SELENIUM_DAEMON_PLIST}
 # Create the home directory for the Server
 mkdir -p /Users/Shared/Selenium/Home
 
-# Change ownership to the daemon user
-find /Users/Shared/Selenium \( -not -user daemon -or -not -group daemon \) -print0 | xargs -0 chown daemon:daemon
+# Write the default user who launches the daemon
+defaults write /Library/Preferences/au.net.fernandez.selenium UserName $USER
+
+# Change ownership to the current user
+find /Users/Shared/Selenium \( -not -user $USER -or -not -group staff \) -print0 | xargs -0 chown $USER:staff
 
 # Load and start the launch daemon
 /bin/launchctl load -w ${SELENIUM_DAEMON_PLIST}

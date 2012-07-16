@@ -52,8 +52,8 @@
 		<!-- Create the Build directories -->
 		<mkdir dir="${projectbuildpath}"/>
 
-		<antcall target="check.pkg.maker"/>
 		<antcall target="build.pkg"/>
+
 	</target>
 
 	<target name="check.pkg.maker" description="Check if PackageMaker application exists">
@@ -66,7 +66,7 @@
 		</condition>
 	</target>
 
-	<target name="build.pkg" if="PackageManagerExist" depends="git.export.macosx">
+	<target name="build.pkg" if="PackageManagerExist" depends="check.pkg.maker, git.export.macosx">
 		<property name="PackageManagerExe" value="${PackageMakerApp}/Contents/MacOS/PackageMaker"/>
 		<property name="PackageNameVersion" value="${ant.project.name}-${selenium.version}.pkg"/>
 
@@ -86,11 +86,6 @@
 			<arg value="-c"/>
 			<arg value="cd ${projectbuildpath}/macosx &amp;&amp; sed -i '' 's/pt=&quot;.*&quot; m=&quot;/pt=&quot;..\/src\/${ant.project.name}.jar&quot; m=&quot;/g' SeleniumServerInstaller.pmdoc\/01selenium-contents.xml"/>
 		</exec>
-
-		<!-- <exec description="Update the plist source for the Launch Daemon content" executable="bash" failonerror="true">
-			<arg value="-c"/>
-			<arg value="cd ${projectbuildpath}/macosx &amp;&amp; sed -i '' 's/pt=&quot;.*&quot; m=&quot;/pt=&quot;launchd\/daemon\/au.net.fernandez.selenium.plist&quot; m=&quot;/g' SeleniumServerInstaller.pmdoc\/02au-contents.xml"/>
-		</exec> -->
 
 		<exec description="Build the Package" executable="bash" failonerror="true">
 			<arg value="-c"/>

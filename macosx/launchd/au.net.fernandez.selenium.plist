@@ -22,5 +22,9 @@
 		<true/>
 		<key>UserName</key>
 		<string>daemon</string>
+		<key>StandardErrorPath</key>
+		<string>/var/log/selenium/selenium-error.log</string>
+		<key>StandardOutPath</key>
+		<string>/var/log/selenium/selenium-output.log</string>
 	</dict>
 </plist>

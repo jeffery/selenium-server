@@ -45,13 +45,14 @@
 
 
 	<!-- #################### MacOsX Build section #################### -->
-	<target name="build.macosx" description="Build the Mac Os X Package" if="isMacOsX" depends="check.pkg.maker">
+	<target name="build.macosx" description="Build the Mac Os X Package" if="isMacOsX">
 		<echo>Building for Mac OS X</echo>
 		<property name="projectbuildpath" value="${buildpath}/${ant.project.name}-${selenium.version}"/>
 
 		<!-- Create the Build directories -->
 		<mkdir dir="${projectbuildpath}"/>
 
+		<antcall target="check.pkg.maker"/>
 		<antcall target="build.pkg"/>
 	</target>
 

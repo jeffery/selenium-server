@@ -9,10 +9,14 @@ chmod 644 ${SELENIUM_DAEMON_PLIST}
 # Create the home directory for the Server
 mkdir -p /Users/Shared/Selenium/Home
 
+# Write the default user who launches the server to the person installing it
+defaults write ~/Library/Preferences/au.net.fernandez.selenium GroupName staff
+defaults write ~/Library/Preferences/au.net.fernandez.selenium UserName $USER
+
 # Change ownership to the current user
 find /Users/Shared/Selenium \( -not -user $USER -or -not -group staff \) -print0 | xargs -0 chown $USER:staff
 
-# Load and start the launch daemon
+# Load and start the launch server
 /bin/launchctl load -w ${SELENIUM_DAEMON_PLIST}
 
 # Wait for port 4444 to start accepting connections.

@@ -10,7 +10,7 @@
 # You can manipulate it using the "defaults" utility.
 # See "man defaults" for details.
 
-defaults="defaults read /Library/Preferences/au.net.fernandez.selenium.plist"
+defaults="defaults read ~/Library/Preferences/au.net.fernandez.selenium.plist"
 
 jar=`$defaults jar` || jar="/Applications/Selenium/selenium-server.jar"
 

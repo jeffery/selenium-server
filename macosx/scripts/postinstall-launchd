@@ -10,9 +10,9 @@ chmod 644 ${SELENIUM_DAEMON_PLIST}
 mkdir -p /Users/Shared/Selenium/Home
 
 # Write the default user who launches the server to the person installing it
-defaults write ~/Library/Preferences/au.net.fernandez.selenium GroupName staff
-defaults write ~/Library/Preferences/au.net.fernandez.selenium UserName $USER
-defaults write ~/Library/Preferences/au.net.fernandez.selenium port 4445
+defaults write /Library/LaunchDaemons/au.net.fernandez.selenium GroupName staff
+defaults write /Library/LaunchDaemons/au.net.fernandez.selenium UserName $USER
+defaults write /Library/LaunchDaemons/au.net.fernandez.selenium port '4444'
 
 # Change ownership to the current user
 find /Users/Shared/Selenium \( -not -user $USER -or -not -group staff \) -print0 | xargs -0 chown $USER:staff
